@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>الاستشارات الطبية</title>
+
+<style>
+body{
+  font-family: Arial;
+  direction: rtl;
+  background:#f4f4f4;
+  padding:20px;
+}
+.container{
+  background:white;
+  padding:20px;
+  max-width:900px;
+  margin:auto;
+  border-radius:10px;
+}
+h2{
+  text-align:center;
+  color:#0066cc;
+}
+.question{
+  margin-bottom:15px;
+}
+.correct{
+  color:green;
+  font-weight:bold;
+}
+.wrong{
+  color:red;
+  font-weight:bold;
+}
+button{
+  padding:10px 20px;
+  background:#0066cc;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+button:hover{
+  background:#004c99;
+}
+textarea{
+  width:100%;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>الاستشارات الطبية لمؤسسة ال عبد اللطيف الطرشوبي</h2>
+
+<label>الاسم:</label>
+<input type="text" id="name"><br><br>
+
+<label>رقم الهاتف:</label>
+<input type="text" id="phone"><br><br>
+
+<form id="quizForm"></form>
+
+<button onclick="submitQuiz()">إنهاء الكويز</button>
+
+<div id="finalResult"></div>
+
+</div>
+
+<script>
+
+// ====== أسئلة اختيار من متعدد ======
+
+const mcqQuestions = Array.from({length:15}, (_,i)=>({
+  q:`سؤال اختيار من متعدد رقم ${i+1}`,
+  options:["اختيار 1","اختيار 2","اختيار 3","اختيار 4"],
+  answer:0
+}));
+
+// ====== أسئلة مقالي ======
+
+const essayQuestions = Array.from({length:5}, (_,i)=>({
+  q:`سؤال مقالي رقم ${i+1}`,
+  ideal:"هذه هي الإجابة المثالية المقترحة لهذا السؤال."
+}));
+
+const form = document.getElementById("quizForm");
+
+// عرض أسئلة MCQ
+mcqQuestions.forEach((item,index)=>{
+  let div = document.createElement("div");
+  div.classList.add("question");
+
+  div.innerHTML = `<p>${item.q}</p>` +
+  item.options.map((opt,i)=>
+    `<label>
+      <input type="radio" name="mcq${index}" value="${i}" onclick="checkAnswer(${index},${i})">
+      ${opt}
+    </label><br>`
+  ).join("") +
+  `<div id="feedback${index}"></div>`;
+
+  form.appendChild(div);
+});
+
+// عرض أسئلة المقالى
+essayQuestions.forEach((item,index)=>{
+  let div = document.createElement("div");
+  div.classList.add("question");
+
+  div.innerHTML = `
+    <p>${item.q}</p>
+    <textarea name="essay${index}" rows="3"></textarea>
+  `;
+
+  form.appendChild(div);
+});
+
+// تصحيح فوري للاختيار من متعدد
+function checkAnswer(qIndex,selected){
+
+  let feedback = document.getElementById("feedback"+qIndex);
+
+  if(selected === mcqQuestions[qIndex].answer){
+    feedback.innerHTML = "<span class='correct'>✔ إجابة صحيحة</span>";
+  }else{
+    feedback.innerHTML = "<span class='wrong'>✖ إجابة خاطئة - الإجابة الصحيحة هي: "
+      + mcqQuestions[qIndex].options[mcqQuestions[qIndex].answer]
+      + "</span>";
+  }
+}
+
+// إنهاء الكويز
+function submitQuiz(){
+
+  let name = document.getElementById("name").value;
+  let phone = document.getElementById("phone").value;
+
+  if(!name || !phone){
+    alert("من فضلك أدخل الاسم ورقم الهاتف");
+    return;
+  }
+
+  let score = 0;
+  let mcqAnswers = [];
+  let essayAnswers = [];
+
+  mcqQuestions.forEach((q,i)=>{
+    let selected = document.querySelector(`input[name="mcq${i}"]:checked`);
+    if(selected){
+      mcqAnswers.push(selected.value);
+      if(parseInt(selected.value) === q.answer){
+        score++;
+      }
+    }else{
+      mcqAnswers.push("لم يجب");
+    }
+  });
+
+  essayQuestions.forEach((q,i)=>{
+    let ans = document.querySelector(`textarea[name="essay${i}"]`).value;
+    essayAnswers.push(ans);
+  });
+
+  fetch("https://script.google.com/macros/s/AKfycbzg0S9LIY2C-RaaxKBVO8R0SCKbQdJhL2qbT8A0Q1hGWuc9wgmhXNpAn008hRseujCf/exec",{
+    method:"POST",
+    body:JSON.stringify({
+      name:name,
+      phone:phone,
+      score:score,
+      mcqAnswers:mcqAnswers.join(" | "),
+      essayAnswers:essayAnswers.join(" | ")
+    })
+  });
+
+  let resultHTML = `<h3>درجتك في الاختيار من متعدد: ${score} / 15</h3>`;
+  resultHTML += "<h3>الإجابات المثالية للأسئلة المقالية:</h3>";
+
+  essayQuestions.forEach((q)=>{
+    resultHTML += `<p>${q.ideal}</p>`;
+  });
+
+  document.getElementById("finalResult").innerHTML = resultHTML;
+}
+
+</script>
+
+</body>
+</html>
