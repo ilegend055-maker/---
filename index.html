@@ -3,104 +3,270 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>استبيان الاستشارات الطبية</title>
+<title>كويز صيدليات عبد الطيف الطرشوبي</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body { font-family: 'Cairo', sans-serif; background: linear-gradient(135deg, #e0f7ff, #ffffff); margin: 0; padding: 0; direction: rtl; }
-.quiz-container { max-width: 700px; background: #fff; margin: 50px auto; padding: 40px 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); transition: all 0.3s ease; }
-.quiz-container:hover { transform: translateY(-5px); }
-h2 { text-align: center; color: #0275d8; margin-bottom: 25px; font-size: 28px; }
-.question { font-size: 22px; margin: 25px 0 15px; font-weight: 700; }
-.answers button { width: 100%; padding: 18px; margin: 12px 0; border: none; border-radius: 20px; background: #0275d8; color: #fff; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-.answers button:hover { background: #025aa5; transform: scale(1.03); }
-#result { margin-top: 25px; font-size: 20px; font-weight: bold; text-align: center; color: #333; }
-.progress-bar { width: 100%; background: #eee; border-radius: 12px; overflow: hidden; margin-bottom: 25px; height: 22px; }
-.progress { height: 100%; background: #0275d8; width: 0%; transition: width 0.4s ease-in-out; }
-@media (max-width: 768px){
-    .quiz-container { margin: 30px 20px; padding: 30px 20px; }
-    h2 { font-size: 24px; }
-    .question { font-size: 20px; }
+body {
+    margin:0;
+    padding:0;
+    font-family:'Cairo',sans-serif;
+    background:#fff;
+    background-image: radial-gradient(#eee 1px, transparent 1px);
+    background-size: 20px 20px;
+    overflow-x:hidden;
+}
+.quiz-container{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+    box-sizing:border-box;
+    position:relative;
+}
+.header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:30px;
+}
+.header img{
+    height:70px;
+    border-radius:12px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+.header h1{
+    color:#b71c1c;
+    font-size:28px;
+    margin:0;
+}
+.question{
+    font-size:28px;
+    font-weight:bold;
+    margin-bottom:40px;
+    text-align:center;
+}
+.answers{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:20px;
+    width:100%;
+    max-width:900px;
+}
+.answers button{
+    padding:25px;
+    font-size:20px;
+    border-radius:25px;
+    border:none;
+    font-weight:bold;
+    cursor:pointer;
+    position:relative;
+    background: linear-gradient(145deg,#8e0000,#b71c1c);
+    color:white;
+    box-shadow: 0 8px 15px rgba(183,28,28,0.3);
+    transition:all 0.4s ease;
+}
+.answers button:hover{
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 15px 25px rgba(183,28,28,0.5);
+}
+#feedback{
+    margin-top:25px;
+    font-size:20px;
+    font-weight:bold;
+    padding:15px;
+    border-radius:15px;
+    width:90%;
+    max-width:900px;
+    text-align:center;
+    display:none;
+}
+.correct{ background:#c8e6c9; color:#1b5e20; }
+.wrong{ background:#ffcdd2; color:#b71c1c; }
+button#nextBtn{
+    margin-top:25px;
+    background:#b71c1c;
+    color:white;
+    padding:15px 25px;
+    font-size:18px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all 0.3s ease;
+}
+button#nextBtn:hover{
+    transform:scale(1.05);
+    background:#e53935;
+}
+.progress-bar{
+    width:90%;
+    max-width:900px;
+    height:25px;
+    background:#eee;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:40px;
+}
+.progress{
+    height:100%;
+    width:0%;
+    background:#b71c1c;
+    transition:width 0.4s ease;
+}
+.input-group{
+    margin:10px 0;
+    width:100%;
+    max-width:400px;
+}
+input{
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:1px solid #b71c1c;
+    font-size:16px;
+}
+button.start-btn{
+    margin-top:20px;
+    padding:20px 35px;
+    background:#b71c1c;
+    color:white;
+    font-size:20px;
+    border:none;
+    border-radius:25px;
+    cursor:pointer;
+    font-weight:bold;
+}
+button.start-btn:hover{
+    background:#e53935;
+    transform:scale(1.05);
+}
+.whatsapp-footer{
+    position:absolute;
+    bottom:15px;
+    font-size:16px;
+    color:#b71c1c;
+    font-weight:bold;
+    width:100%;
+    text-align:center;
 }
 </style>
 </head>
 <body>
 
-<div class="quiz-container">
-    <h2>استبيان الاستشارات الطبية</h2>
-    <div class="progress-bar">
-        <div class="progress" id="progress"></div>
-    </div>
-    <div id="quiz">
-        <div class="question" id="question">سوف يظهر السؤال هنا</div>
-        <div class="answers" id="answers"></div>
-    </div>
-    <div id="result"></div>
+<div class="quiz-container" id="start-screen">
+<div class="header">
+<img src="logo.png" alt="صيدليات عبد الطيف الطرشوبي">
+<h1>صيدليات عبد الطيف الطرشوبي</h1>
+</div>
+<h2>أدخل بياناتك للبدء بالكويز</h2>
+<div class="input-group"><input type="text" id="name" placeholder="الاسم الأول"></div>
+<div class="input-group"><input type="text" id="phone" placeholder="رقم التليفون"></div>
+<button class="start-btn" onclick="startQuiz()">ابدأ الكويز</button>
+<div class="whatsapp-footer">WhatsApp Team</div>
+</div>
+
+<div class="quiz-container" id="quiz-container" style="display:none;">
+<div class="progress-bar"><div class="progress" id="progress"></div></div>
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
+<div id="feedback"></div>
+<button id="nextBtn" onclick="nextQuestion()" style="display:none;">السؤال التالي</button>
+<div id="result"></div>
+<div class="whatsapp-footer">WhatsApp Team</div>
 </div>
 
 <script>
-// ==== ضع هنا أسئلتك الطبية ====
-const quizData = [
-    // مثال:
-    // {question: "هل تشعر بأي أعراض؟", answers:["نعم","لا"], values:[1,0]}
+// ==== أسئلة تجريبية 20 سؤال ====
+const quizData=[
+{question:"ما هو التشخيص الأولي لمريض يعاني من ارتفاع ضغط الدم المزمن؟", answers:["تعديل نمط الحياة","جراحة","انتظار","لا شيء"], correct:0, explanation:"تعديل نمط الحياة هو أول خطوة لعلاج ارتفاع الضغط المزمن."},
+{question:"أفضل علاج للعدوى البكتيرية الخفيفة هو؟", answers:["المضاد الحيوي المناسب","مسكن","راحة","فيتامينات"], correct:0, explanation:"المضاد الحيوي المناسب يقتل البكتيريا المسببة للعدوى."},
+{question:"ما هو الفحص الأنسب لتشخيص السكري؟", answers:["سكر صائم","ضغط الدم","وظائف الكبد","بول"], correct:0, explanation:"قياس مستوى السكر الصائم يعطي تشخيص دقيق للسكري."},
+{question:"مريض يعاني من ضيق تنفس مفاجئ، الخطوة الأولى؟", answers:["تقييم ABC","مسكن","راحة","إرسال المنزل"], correct:0, explanation:"تقييم ABC لتأمين التنفس والدورة الدموية فوراً."},
+{question:"ما هو العنصر الغذائي المهم لتقوية العظام؟", answers:["الكالسيوم","الدهون","السكريات","الملح"], correct:0, explanation:"الكالسيوم يقوي العظام ويحميها."},
+{question:"اللقاح المضاد للإنفلونزا يُعطى عادة في أي موسم؟", answers:["الخريف","الشتاء","الصيف","الربيع"], correct:0, explanation:"اللقاح يُعطى في الخريف قبل موسم الانفلونزا."},
+{question:"أفضل طريقة لتقليل العدوى في المستشفى؟", answers:["غسل اليدين","تجنب المرضى","الأقنعة فقط","المطهرات"], correct:0, explanation:"غسل اليدين هو الطريقة الأكثر فاعلية للوقاية."},
+{question:"ما هو التشخيص المحتمل لمريض مصاب بألم صدر حاد؟", answers:["النوبة القلبية","الصداع","الجلطة","عسر الهضم"], correct:0, explanation:"ألم الصدر الحاد غالباً يشير لنوبة قلبية."},
+{question:"الجرعة الآمنة لدواء الباراسيتامول للبالغين؟", answers:["500-1000 ملغ كل 6 ساعات","10 ملغ مرة","5 غرام مرة","غير محدد"], correct:0, explanation:"الجرعة الآمنة للبالغين هي 500-1000 ملغ كل 6 ساعات."},
+{question:"ما هو المؤشر الأساسي لفحص وظائف الكبد؟", answers:["ALT و AST","الهيموغلوبين","الكوليسترول","السكر"], correct:0, explanation:"ALT و AST هما المؤشرات الرئيسية لوظائف الكبد."},
+{question:"أفضل اختبار تشخيصي للالتهاب الرئوي؟", answers:["الأشعة الصدرية","ضغط الدم","الحرارة","معدل التنفس"], correct:0, explanation:"الأشعة الصدرية تحدد وجود الالتهاب الرئوي."},
+{question:"ما هو العلاج الأولي للحساسية الجلدية الخفيفة؟", answers:["مضاد هيستامين","مضاد حيوي","مسكن","كريم مرطب"], correct:0, explanation:"مضاد الهيستامين يخفف أعراض الحساسية الجلدية."},
+{question:"مريض يعاني من فقدان وزن غير مبرر، أول خطوة؟", answers:["تقييم شامل","راحة","فيتامينات","حمية"], correct:0, explanation:"التقييم الشامل ضروري لمعرفة السبب."},
+{question:"أفضل طريقة لقياس ضغط الدم بدقة؟", answers:["جلوس 5 دقائق","القياس أثناء المشي","بعد الرياضة","مباشر"], correct:0, explanation:"الجلوس والراحة 5 دقائق قبل القياس يعطي نتيجة دقيقة."},
+{question:"متى يتم إعطاء لقاح التهاب الكبد B للمواليد؟", answers:["24 ساعة بعد الولادة","بعد أسبوع","بعد شهر","غير محدد"], correct:0, explanation:"يجب إعطاؤه خلال 24 ساعة الأولى بعد الولادة."},
+{question:"مريض يعاني من صداع متكرر، ما الفحص الأول؟", answers:["ضغط الدم","فحص الدم","البول","السمع"], correct:0, explanation:"ضغط الدم أول فحص لاستبعاد الصداع الناتج عن ارتفاع الضغط."},
+{question:"أهم خطوة عند ملاحظة أعراض جلطة دماغية؟", answers:["الاتصال بالإسعاف","مسكن","تجاهل","راحة"], correct:0, explanation:"التدخل العاجل ينقذ المريض من مضاعفات الجلطة."},
+{question:"ما هو الفحص الأول لمريض يعاني من آلام مفصل الركبة؟", answers:["الأشعة","ضغط الدم","سكر","تنظير"], correct:0, explanation:"الأشعة هي الفحص الأول لتقييم مشاكل الركبة."},
+{question:"أفضل علاج لمريض مصاب بإسهال بسيط؟", answers:["شرب السوائل","مضاد حيوي","صيام","أدوية مسكنة"], correct:0, explanation:"شرب السوائل يعوض الجسم عن الفقد الناتج عن الإسهال."},
+{question:"ما هو مؤشر فشل الكلى المزمن؟", answers:["ارتفاع الكرياتينين","ضغط منخفض","حرارة مرتفعة","هيموغلوبين منخفض"], correct:0, explanation:"ارتفاع الكرياتينين يشير لفشل الكلى المزمن."}
 ];
 
-let currentQuestion = 0;
-let score = 0;
-let userAnswers = [];
+let currentQuestion=0,score=0,name="",phone="",userAnswers=[];
 
-// رابط Web App الخاص بـ Google Sheets
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxgpRr_5nZyxXjq1NvB9esUM51leNlxThk9UeZrvxsmI-vr0cWFj-ktLFQ8TGpF693R/exec"; 
+function startQuiz(){
+    name=document.getElementById("name").value.trim();
+    phone=document.getElementById("phone").value.trim();
+    if(!name||!phone){alert("أدخل الاسم ورقم التليفون"); return;}
+    document.getElementById("start-screen").style.display="none";
+    document.getElementById("quiz-container").style.display="flex";
+    loadQuestion();
+}
 
-function loadQuestion() {
-    if(currentQuestion >= quizData.length){
-        document.getElementById("quiz").style.display = "none";
-        document.getElementById("progress").style.width = "100%";
-        
-        let advice = "";
-        if(score <= 2) advice = "لا تحتاج لاستشارة فورية، لكن راقب صحتك.";
-        else if(score <= 5) advice = "قد يكون من المفيد استشارة طبيب قريبًا.";
-        else advice = "ننصحك بجدية بزيارة طبيب مختص فورًا.";
-
-        document.getElementById("result").innerText = `نتيجتك: ${score} - ${advice}`;
-        sendToGoogleSheet();
-        return;
-    }
-
-    const q = quizData[currentQuestion];
-    document.getElementById("question").innerText = q.question;
-
-    const answersDiv = document.getElementById("answers");
-    answersDiv.innerHTML = "";
+function loadQuestion(){
+    const q=quizData[currentQuestion];
+    document.getElementById("question").innerText=q.question;
+    const answersDiv=document.getElementById("answers");
+    answersDiv.innerHTML="";
+    const feedback=document.getElementById("feedback");
+    feedback.style.display="none";
+    document.getElementById("nextBtn").style.display="none";
     q.answers.forEach((ans,index)=>{
-        const btn = document.createElement("button");
-        btn.innerText = ans;
-        btn.onclick = ()=>{
-            score += q.values[index];
+        const btn=document.createElement("button");
+        btn.innerHTML=`${ans}`;
+        btn.onclick=()=>{
             userAnswers.push(ans);
-            currentQuestion++;
+            if(index===q.correct){
+                feedback.innerText=`✅ إجابتك صحيحة. السبب: ${q.explanation}`;
+                feedback.className="correct";
+                score++;
+            }else{
+                feedback.innerText=`❌ إجابتك خاطئة. الإجابة الصحيحة: ${q.answers[q.correct]}. السبب: ${q.explanation}`;
+                feedback.className="wrong";
+            }
+            feedback.style.display="block";
+            Array.from(answersDiv.children).forEach(b=>b.disabled=true);
+            document.getElementById("nextBtn").style.display="block";
             updateProgress();
-            loadQuestion();
         };
         answersDiv.appendChild(btn);
     });
 }
 
-function updateProgress(){
-    const percent = (currentQuestion/quizData.length)*100;
-    document.getElementById("progress").style.width = percent + "%";
+function nextQuestion(){
+    currentQuestion++;
+    if(currentQuestion>=quizData.length){
+        document.getElementById("quiz-container").innerHTML=`<h2>${name}، لقد أجبت ${score} من ${quizData.length} أسئلة بشكل صحيح.</h2>`;
+        sendToGoogleSheet();
+    }else{
+        loadQuestion();
+    }
 }
 
+function updateProgress(){
+    const percent=((currentQuestion)/quizData.length)*100;
+    document.getElementById("progress").style.width=percent+"%";
+}
+
+// ارسال البيانات لجوجل شيت
+const WEB_APP_URL="ضع_رابط_Web_App_هنا";
 function sendToGoogleSheet(){
     fetch(WEB_APP_URL,{
         method:"POST",
-        body: JSON.stringify({answers:userAnswers}),
+        body:JSON.stringify({name:name,phone:phone,score:score,answers:userAnswers}),
         headers:{"Content-Type":"application/json"}
-    }).then(res=>res.json())
-      .then(data=>console.log("تم حفظ البيانات:", data))
-      .catch(err=>console.error("خطأ في الإرسال:", err));
+    }).then(res=>res.json()).then(data=>console.log("تم الحفظ",data))
+    .catch(err=>console.error("خطأ في الإرسال",err));
 }
-
-loadQuestion();
 </script>
 
 </body>
